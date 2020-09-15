@@ -1,4 +1,6 @@
-﻿using System;
+﻿using HivelyCoreMVC.Data.Entities;
+using HivelyCoreMVC.Models.NoteModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;

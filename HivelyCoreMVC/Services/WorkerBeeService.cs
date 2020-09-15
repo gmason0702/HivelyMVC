@@ -1,6 +1,7 @@
 ﻿using HivelyCoreMVC.Data;
 using HivelyCoreMVC.Data.Entities;
 using HivelyCoreMVC.Models.WorkerBeeModels;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,10 +13,8 @@ namespace HivelyCoreMVC.Services
     {
         private readonly Guid _userId;
 
-        public WorkerBeeService()
-        {
+        public WorkerBeeService() { }
 
-        }
         public WorkerBeeService(Guid userId)
         {
             _userId = userId;

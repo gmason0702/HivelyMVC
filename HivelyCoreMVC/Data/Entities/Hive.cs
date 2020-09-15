@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace HivelyCoreMVC.Data.Entities
 {
-    public enum Status { Winter, SpringBrood, Swarm, Flow, FallPrep }
+    public enum Status { Winter, SpringBrood, VarroaTreatment, DiseaseCheck, FeedCandy, FeedWater, Swarm, Flow, FallPrep }
 
     public class Hive
     {

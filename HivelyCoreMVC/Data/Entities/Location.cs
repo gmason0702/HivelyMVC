@@ -22,4 +22,4 @@ namespace HivelyCoreMVC.Data.Entities
         public virtual ICollection<Hive> Hives { get; set; }
     }
 }
-}
+
