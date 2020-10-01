@@ -2,6 +2,8 @@
 using HivelyCoreMVC.Data.Entities;
 using HivelyCoreMVC.Models.HiveModels;
 using HivelyCoreMVC.Models.NoteModels;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -12,20 +14,17 @@ namespace HivelyCoreMVC.Services
 {
     public class HiveService
     {
-        private readonly Guid _userId;
+        private readonly ApplicationDbContext _context;
+        private int _userId;
 
-        public HiveService()
+        public HiveService() { }
+        public HiveService(ApplicationDbContext context)
         {
-
-        }
-        public HiveService(Guid userId)
-        {
-            _userId = userId;
+            _context = context;
         }
 
-        public bool CreateHive(HiveCreate model)
+        public async Task<bool> CreateHive(HiveCreate model)
         {
-
             var entity = new Hive()
             {
                 OwnerId = _userId,
@@ -34,88 +33,76 @@ namespace HivelyCoreMVC.Services
                 NumberOfDeeps = model.NumberOfDeeps,
                 Status = model.Status,
                 LocationId = model.LocationId
-
             };
-
-            using (var ctx = new ApplicationDbContext()) //only working with empty ctor but won't actually add/save 
-            {
-                ctx.Hives.Add(entity);
-                return ctx.SaveChanges() == 1;
-            }
-
+            _context.Hives.Add(entity);
+            return await _context.SaveChangesAsync() == 1;
         }
 
-        public IEnumerable<HiveListItem> GetHives()
+        public async Task<IEnumerable<HiveListItem>> GetHives()
         {
-            using (var ctx = new ApplicationDbContext())
-            {
-                var query = ctx.Hives.Where(e => e.OwnerId == _userId)
-                    .Select(e => new HiveListItem
-                    {
-                        HiveName = e.HiveName,
-                        OriginDate = e.OriginDate,
-                        NumberOfDeeps = e.NumberOfDeeps,
-                        HasSwarmed = e.HasSwarmed,
-                        Status = e.Status
-
-                    });
-                return query.ToArray();
-            }
-        }
-
-        public HiveDetails GetHiveById(int id)
-        {
-            using (var ctx = new ApplicationDbContext())
-            {
-                var entity = ctx.Hives.Single(e => e.Id == id);
-                return new HiveDetails()
+            var query = _context.Hives
+                .Select(e => new HiveListItem
                 {
-                    Id = entity.Id,
-                    HiveName = entity.HiveName,
-                    OriginDate = entity.OriginDate,
-                    NumberOfDeeps = entity.NumberOfDeeps,
-                    HasSwarmed = entity.HasSwarmed,
-                    Status = entity.Status,
-                    LocationName = entity.Locations.LocationName,
-                    QueenName = entity.Queens.QueenName,
-
-                    Notes = entity.Notes.Select(n => new NoteListItem
-                    {
-                        Id = n.Id,
-                        NoteTitle = n.NoteTitle,
-                        NoteDate = n.NoteDate,
-                        NoteContent = n.NoteContent,
-                        TypeOfNote = n.TypeOfNote
-                    }).ToList()
-
-                };
-            }
+                    HiveName = e.HiveName,
+                    OriginDate = e.OriginDate,
+                    NumberOfDeeps = e.NumberOfDeeps,
+                    HasSwarmed = e.HasSwarmed,
+                    Status = e.Status
+                });
+            return await query.ToListAsync();
         }
-        public bool UpdateHive(HiveEdit model)
+
+        public async Task<HiveDetails> GetHiveById(int id)
         {
-            using (var ctx = new ApplicationDbContext())
+
+            var entity = await _context.Hives.FirstOrDefaultAsync(e => e.Id == id && e.OwnerId == _userId);
+            if (entity is null)
             {
-                var entity = ctx.Hives.Single(e => e.Id == model.Id);
-                entity.Id = model.Id;
-                entity.HiveName = model.HiveName;
-                entity.OriginDate = model.OriginDate;
-                entity.NumberOfDeeps = model.NumberOfDeeps;
-                entity.HasSwarmed = model.HasSwarmed;
-                entity.Status = model.Status;
-                entity.LocationId = model.LocationId;
-
-                return ctx.SaveChanges() == 1;
+                return null;
             }
-        }
+            return new HiveDetails()
+            {
+                Id = entity.Id,
+                HiveName = entity.HiveName,
+                OriginDate = entity.OriginDate,
+                NumberOfDeeps = entity.NumberOfDeeps,
+                HasSwarmed = entity.HasSwarmed,
+                Status = entity.Status,
+                LocationName = entity.Locations.LocationName,
+                QueenName = entity.Queens.QueenName,
 
-        public bool DeleteHive(int id)
+                Notes = entity.Notes.Select(n => new NoteListItem
+                {
+                    Id = n.Id,
+                    NoteTitle = n.NoteTitle,
+                    NoteDate = n.NoteDate,
+                    NoteContent = n.NoteContent,
+                    TypeOfNote = n.TypeOfNote
+                }).ToList()
+            };
+        }
+        public async Task<bool> UpdateHive(HiveEdit model)
         {
-            using (var ctx = new ApplicationDbContext())
-            {
-                var entity = ctx.Hives.Single(e => e.Id == id);
-                ctx.Hives.Remove(entity);
-                return ctx.SaveChanges() == 1;
-            }
+
+            var entity = await _context.Hives.FindAsync(model.Id);
+            entity.Id = model.Id;
+            entity.HiveName = model.HiveName;
+            entity.OriginDate = model.OriginDate;
+            entity.NumberOfDeeps = model.NumberOfDeeps;
+            entity.HasSwarmed = model.HasSwarmed;
+            entity.Status = model.Status;
+            entity.LocationId = model.LocationId;
+
+            return await _context.SaveChangesAsync() == 1;
         }
+
+        public async Task<bool> DeleteHive(int id)
+        {
+            var entity = await _context.Hives.FindAsync(id);
+            _context.Hives.Remove(entity);
+            return _context.SaveChanges() == 1;
+        }
+
+        public void SetUserId(int userId) => _userId = userId;
     }
 }

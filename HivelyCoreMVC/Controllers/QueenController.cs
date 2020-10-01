@@ -15,14 +15,13 @@ namespace HivelyCoreMVC.Controllers
     public class QueenController : Controller
     {
         // GET: Queen
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
             var service = new QueenService();
-            var model = service.GetQueens();
+            var model = await service.GetQueens();
 
             return View(model);
         }
-
 
         // GET: Queen/Create
         public ActionResult Create()
@@ -31,16 +30,14 @@ namespace HivelyCoreMVC.Controllers
         }
 
         // POST: Queen/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(QueenCreate model)
+        public async Task<ActionResult> Create(QueenCreate model)
         {
             if (!ModelState.IsValid) return View(model);
 
             var service = new QueenService();
-            if (service.CreateQueen(model))
+            if (await service.CreateQueen(model))
             {
                 TempData["SaveResult"] = "Your Queen was created.";
                 return RedirectToAction("Index");
@@ -50,10 +47,10 @@ namespace HivelyCoreMVC.Controllers
         }
 
         // GET: Queen/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> Edit(int id)
         {
             var service = new QueenService();
-            var detail = service.GetQueenById(id);
+            var detail = await service.GetQueenById(id);
             var model =
                 new QueenEdit
                 {
@@ -66,11 +63,9 @@ namespace HivelyCoreMVC.Controllers
         }
 
         // POST: Queen/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, QueenEdit model)
+        public async Task<ActionResult> Edit(int id, QueenEdit model)
         {
             if (!ModelState.IsValid) return View(model);
 
@@ -81,21 +76,20 @@ namespace HivelyCoreMVC.Controllers
             }
 
             var service = new QueenService();
-            if (service.UpdateQueen(model))
+            if (await service.UpdateQueen(model))
             {
                 TempData["SaveResult"] = "Your Queen was added. Long live the Queen.";
                 return RedirectToAction("Index");
             }
-
             ModelState.AddModelError("", "Your Queen could not be added.");
             return View(model);
         }
 
         // GET: Queen/Delete/5
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
             var svc = new QueenService();
-            var model = svc.GetQueenById(id);
+            var model = await svc.GetQueenById(id);
 
             return View(model);
         }
@@ -103,10 +97,10 @@ namespace HivelyCoreMVC.Controllers
         // POST: Queen/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
+        public async Task<ActionResult> DeleteConfirmed(int id)
         {
             var service = new QueenService();
-            service.DeleteQueen(id);
+            await service.DeleteQueen(id);
             TempData["SaveResult"] = "Your Queen was deleted. May she return soon.";
 
             return RedirectToAction("Index");

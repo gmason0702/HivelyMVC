@@ -14,16 +14,10 @@ namespace HivelyCoreMVC.Controllers
 {
     public class WorkerBeeController : Controller
     {
-        private readonly ApplicationDbContext _db;
-        public WorkerBeeController(ApplicationDbContext db)
+        public async Task<ActionResult> Index()
         {
-            _db = db;
-        }
-        public ActionResult Index()
-        {
-            //var userId = Guid.Parse(User.Identity.GetUserId()); // GetUserId not valid method in .NET Core afaik
-            var service = new WorkerBeeService(userId); //can't take in bc of ln24
-            var model = service.GetBees();
+            var service = new WorkerBeeService(); 
+            var model = await service.GetBees();
 
             return View(model);
         }
@@ -38,12 +32,12 @@ namespace HivelyCoreMVC.Controllers
         // POST: Hive/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(WorkerBeeCreate model)
+        public async Task<ActionResult> Create(WorkerBeeCreate model)
         {
             if (!ModelState.IsValid) return View(model);
 
             var service = new WorkerBeeService();
-            if (service.CreateBees(model))
+            if (await service.CreateBees(model))
             {
                 TempData["SaveResult"] = "Your worker bees were added. May they polinate.";
                 return RedirectToAction("Index");
@@ -51,19 +45,17 @@ namespace HivelyCoreMVC.Controllers
             }
             ModelState.AddModelError("", "Worker bees could not be added.");
             return View(model);
-
         }
 
         // GET: Hive/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> Edit(int id)
         {
             var service = new WorkerBeeService();
-            var detail = service.GetBeesById(id);
+            var detail = await service.GetBeesById(id);
             var model = new WorkerBeeEdit
             {
                 OriginDate = detail.OriginDate,
                 OriginLocation = detail.OriginLocation,
-
             };
             return View();
         }
@@ -71,7 +63,7 @@ namespace HivelyCoreMVC.Controllers
         // POST: Hive/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, WorkerBeeEdit model)
+        public async Task<ActionResult> Edit(int id, WorkerBeeEdit model)
         {
             if (!ModelState.IsValid) return View(model);
 
@@ -82,7 +74,7 @@ namespace HivelyCoreMVC.Controllers
             }
 
             var service = new WorkerBeeService();
-            if (service.UpdateBees(model))
+            if (await service.UpdateBees(model))
             {
                 TempData["SaveResult"] = "Your bees were been edited.";
                 return RedirectToAction("Index");
@@ -92,34 +84,31 @@ namespace HivelyCoreMVC.Controllers
             return View(model);
         }
 
-
         // GET: Hive/Delete/5
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
             var service = new WorkerBeeService();
-            var model = service.GetBeesById(id);
+            var model = await service.GetBeesById(id);
             return View(model);
         }
-
 
         // POST: Hive/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteHive(int id)
+        public async Task<ActionResult> DeleteHive(int id)
         {
             var service = new WorkerBeeService();
-            service.DeleteBees(id);
+            await service.DeleteBees(id);
             TempData["SaveResult"] = "Your Hive has been deleted. Rest in Pollen.";
 
             return RedirectToAction("Index");
         }
 
-        private WorkerBeeService CreateWorkerBeeService()
-        {
-            var userId = Guid.Parse(User.Identity.GetUserId()); 
-            var service = new WorkerBeeService(userId);
-            return service;
-
-        }
+        //private WorkerBeeService CreateWorkerBeeService()
+        //{
+        //    var userId = Guid.Parse(User.Identity.GetUserId()); 
+        //    var service = new WorkerBeeService(userId);
+        //    return service;
+        //}
     }
 }

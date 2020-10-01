@@ -1,14 +1,15 @@
 ﻿using HivelyCoreMVC.Models.NoteModels;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace HivelyCoreMVC.Services
 {
     public interface INoteService
     {
-        bool CreateNote(NoteCreate model);
-        bool DeleteNote(int id);
-        NoteDetails GetNoteById(int id);
-        IEnumerable<NoteListItem> GetNotes();
-        bool UpdateNote(NoteEdit model);
+        Task<bool> CreateNote(NoteCreate model);
+        Task<bool> DeleteNote(int id);
+        Task<NoteDetails> GetNoteById(int id);
+        Task<IEnumerable<NoteListItem>> GetNotes();
+        Task<bool> UpdateNote(NoteEdit model);
     }
 }

@@ -15,10 +15,10 @@ namespace HivelyCoreMVC.Controllers
 {
     public class NoteController : Controller
     {
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
             var service = new NoteService();
-            var model = service.GetNotes();
+            var model = await service.GetNotes();
 
             return View(model);
         }
@@ -33,12 +33,12 @@ namespace HivelyCoreMVC.Controllers
         // POST: Note/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(NoteCreate model)
+        public async Task<ActionResult> Create(NoteCreate model)
         {
             if (!ModelState.IsValid) return View(model);
 
             var service = new NoteService();
-            if (service.CreateNote(model))
+            if (await service.CreateNote(model))
             {
                 TempData["SaveResult"] = "Your note was created.";
                 return RedirectToAction("Index");
@@ -48,10 +48,10 @@ namespace HivelyCoreMVC.Controllers
         }
 
         // GET: Note/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> Edit(int id)
         {
             var service = new NoteService();
-            var detail = service.GetNoteById(id);
+            var detail = await service.GetNoteById(id);
             var model =
                 new NoteEdit
                 {
@@ -68,7 +68,7 @@ namespace HivelyCoreMVC.Controllers
 
         // POST: Note/Edit/5
         [HttpPost]
-        public ActionResult Edit(int id, NoteEdit model)
+        public async Task<ActionResult> Edit(int id, NoteEdit model)
         {
             if (!ModelState.IsValid) return View(model);
 
@@ -79,7 +79,7 @@ namespace HivelyCoreMVC.Controllers
             }
 
             var service = new NoteService();
-            if (service.UpdateNote(model))
+            if (await service.UpdateNote(model))
             {
                 TempData["SaveResult"] = "Your Note was added.";
                 return RedirectToAction("Index");
@@ -90,25 +90,24 @@ namespace HivelyCoreMVC.Controllers
         }
 
         // GET: Note/Delete/5
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
             var svc = new NoteService();
-            var model = svc.GetNoteById(id);
+            var model = await svc.GetNoteById(id);
 
             return View(model);
         }
 
         // POST: Note/Delete/5
         [HttpPost]
-        public ActionResult DeleteNote(int id)
+        public async Task<ActionResult> DeleteNote(int id)
         {
             var service = new NoteService();
-            service.DeleteNote(id);
+            await service.DeleteNote(id);
             TempData["SaveResult"] = "Your Note was deleted. Hope it wasn't important.";
 
             return RedirectToAction("Index");
         }
-
 
         //private NoteService CreateNoteService()
         //{

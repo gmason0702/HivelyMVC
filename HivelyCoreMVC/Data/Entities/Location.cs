@@ -10,7 +10,7 @@ namespace HivelyCoreMVC.Data.Entities
     {
         [Key]
         public int Id { get; set; }
-        public Guid OwnerId { get; set; }
+        public int OwnerId { get; set; }
         public string LocationName { get; set; }
         public string City { get; set; }
         public string State { get; set; }

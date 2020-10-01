@@ -14,14 +14,13 @@ namespace HivelyCoreMVC.Controllers
 {
     public class LocationController : Controller
     {
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
             var service = new LocationService();
-            var model = service.GetLocations();
+            var model = await service.GetLocations();
 
             return View(model);
         }
-
 
         // GET: Hive/Create
         public ActionResult Create()
@@ -32,12 +31,12 @@ namespace HivelyCoreMVC.Controllers
         // POST: Hive/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(LocationCreate model)
+        public async Task<ActionResult> Create(LocationCreate model)
         {
             if (!ModelState.IsValid) return View(model);
 
             var service = new LocationService();
-            if (service.CreateLocation(model))
+            if (await service.CreateLocation(model))
             {
                 TempData["SaveResult"] = "Location was created.";
                 return RedirectToAction("Index");
@@ -49,10 +48,10 @@ namespace HivelyCoreMVC.Controllers
         }
 
         // GET: Hive/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> Edit(int id)
         {
             var service = new LocationService();
-            var detail = service.GetLocationById(id);
+            var detail = await service.GetLocationById(id);
             var model = new LocationEdit
             {
                 LocationName = detail.LocationName,
@@ -67,7 +66,7 @@ namespace HivelyCoreMVC.Controllers
         // POST: Hive/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, LocationEdit model)
+        public async Task<ActionResult> Edit(int id, LocationEdit model)
         {
             if (!ModelState.IsValid) return View(model);
 
@@ -78,7 +77,7 @@ namespace HivelyCoreMVC.Controllers
             }
 
             var service = new LocationService();
-            if (service.UpdateLocation(model))
+            if (await service.UpdateLocation(model))
             {
                 TempData["SaveResult"] = "Location was been edited.";
                 return RedirectToAction("Index");
@@ -88,23 +87,21 @@ namespace HivelyCoreMVC.Controllers
             return View(model);
         }
 
-
         // GET: Hive/Delete/5
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
             var service = new LocationService();
-            var model = service.GetLocationById(id);
+            var model = await service.GetLocationById(id);
             return View(model);
         }
-
 
         // POST: Hive/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteLocation(int id)
+        public async Task<ActionResult> DeleteLocation(int id)
         {
             var service = new LocationService();
-            service.DeleteLocation(id);
+            await service.DeleteLocation(id);
             TempData["SaveResult"] = "Your Location has been deleted.";
 
             return RedirectToAction("Index");

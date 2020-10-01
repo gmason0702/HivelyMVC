@@ -3,6 +3,7 @@ using HivelyCoreMVC.Data.Entities;
 using HivelyCoreMVC.Models.HiveModels;
 using HivelyCoreMVC.Models.LocationModels;
 using HivelyCoreMVC.Models.NoteModels;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,18 +13,16 @@ namespace HivelyCoreMVC.Services
 {
     public class LocationService
     {
-        private readonly Guid _userId;
-        public LocationService()
+        private readonly ApplicationDbContext _context;
+        private int _userId;
+
+        public LocationService(ApplicationDbContext context)
         {
-
+            _context = context;
         }
+        public LocationService() { }
 
-        public LocationService(Guid userId)
-        {
-            _userId = userId;
-        }
-
-        public bool CreateLocation(LocationCreate model)
+        public async Task<bool> CreateLocation(LocationCreate model)
         {
             var entity = new Location()
             {
@@ -34,19 +33,15 @@ namespace HivelyCoreMVC.Services
                 Longitude = model.Longitude,
                 Latitude = model.Latitude
             };
+            _context.Locations.Add(entity);
 
-            using (var ctx = new ApplicationDbContext())
-            {
-                ctx.Locations.Add(entity);
-                return ctx.SaveChanges() == 1;
-            }
+            var changes = await _context.SaveChangesAsync();
+            return changes == 1;
         }
 
-        public IEnumerable<LocationListItem> GetLocations()
+        public async Task<IEnumerable<LocationListItem>> GetLocations()
         {
-            using (var ctx = new ApplicationDbContext())
-            {
-                var query = ctx.Locations.Where(e => e.OwnerId == _userId)
+            var locationQuery = _context.Locations.Where(e => e.OwnerId == _userId)
                     .Select(e => new LocationListItem
                     {
                         LocationName = e.LocationName,
@@ -56,74 +51,74 @@ namespace HivelyCoreMVC.Services
                         Latitude = e.Latitude,
                         MapLink = e.MapLink
                     });
-                return query.ToArray();
-            }
+            return await locationQuery.ToListAsync();
         }
 
-        public LocationDetails GetLocationById(int id)
+        public async Task<LocationDetails> GetLocationById(int id)
         {
-            using (var ctx = new ApplicationDbContext())
+            var entity = await _context.Locations.FirstOrDefaultAsync(e => e.Id == id && e.OwnerId == _userId);
+            if (entity is null)
             {
-                var entity = ctx.Locations.Single(e => e.Id == id);
+                return null;
+            }
+            return
+                new LocationDetails
+                {
+                    Id = entity.Id,
+                    LocationName = entity.LocationName,
+                    City = entity.City,
+                    State = entity.State,
+                    Longitude = entity.Longitude,
+                    Latitude = entity.Latitude,
+                    MapLink = entity.MapLink,
 
-                return
-                    new LocationDetails
+                    Notes = entity.Notes.Select(note => new NoteListItem
                     {
-                        Id = entity.Id,
-                        LocationName = entity.LocationName,
-                        City = entity.City,
-                        State = entity.State,
-                        Longitude = entity.Longitude,
-                        Latitude = entity.Latitude,
-                        MapLink = entity.MapLink,
+                        Id = note.Id,
+                        NoteTitle = note.NoteTitle,
+                        NoteDate = note.NoteDate,
+                        NoteContent = note.NoteContent,
+                        TypeOfNote = note.TypeOfNote,
 
-                        Notes = entity.Notes.Select(note => new NoteListItem
-                        {
-                            Id = note.Id,
-                            NoteTitle = note.NoteTitle,
-                            NoteDate = note.NoteDate,
-                            NoteContent = note.NoteContent,
-                            TypeOfNote = note.TypeOfNote,
-
-                        }).ToList(),
-                        Hives = entity.Hives.Select(r => new HiveListItem
-                        {
-                            Id = r.Id,
-                            HiveName = r.HiveName,
-                            OriginDate = r.OriginDate,
-                            NumberOfDeeps = r.NumberOfDeeps,
-                            HasSwarmed = r.HasSwarmed,
-                            Status = r.Status,
-                        }).ToList()
-                    };
-            }
-
+                    }).ToList(),
+                    Hives = entity.Hives.Select(r => new HiveListItem
+                    {
+                        Id = r.Id,
+                        HiveName = r.HiveName,
+                        OriginDate = r.OriginDate,
+                        NumberOfDeeps = r.NumberOfDeeps,
+                        HasSwarmed = r.HasSwarmed,
+                        Status = r.Status,
+                    }).ToList()
+                };
         }
-        public bool UpdateLocation(LocationEdit model)
+
+        public async Task<bool> UpdateLocation(LocationEdit model)
         {
-            using (var ctx = new ApplicationDbContext())
+            var entity = await _context.Locations.FindAsync(model.Id);
+            if (entity?.OwnerId != _userId)
             {
-                var entity = ctx.Locations.Single(e => e.Id == model.Id);
                 entity.Id = model.Id;
                 entity.LocationName = model.LocationName;
                 entity.City = model.City;
                 entity.State = model.State;
                 entity.Longitude = model.Longitude;
                 entity.Latitude = model.Latitude;
-
-                return ctx.SaveChanges() == 1;
-
             }
+            return await _context.SaveChangesAsync() == 1;
         }
 
-        public bool DeleteLocation(int id)
+        public async Task<bool> DeleteLocation(int id)
         {
-            using (var ctx = new ApplicationDbContext())
+            var entity = await _context.Locations.FindAsync(id);
+            if (entity?.OwnerId != _userId)
             {
-                var entity = ctx.Locations.Single(e => e.Id == id);
-                ctx.Locations.Remove(entity);
-                return ctx.SaveChanges() == 1;
+                return false;
             }
+            _context.Locations.Remove(entity);
+            return await _context.SaveChangesAsync() == 1;
         }
+
+        public void SetUserId(int userId) => _userId = userId;
     }
 }

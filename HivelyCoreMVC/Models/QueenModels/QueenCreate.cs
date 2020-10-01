@@ -11,7 +11,7 @@ namespace HivelyCoreMVC.Models.QueenModels
     public class QueenCreate
     {
         public int Id { get; set; }
-        public Guid OwnerId { get; set; }
+        public int OwnerId { get; set; }
         public int Age { get; set; }
         public Color Color { get; set; }
 

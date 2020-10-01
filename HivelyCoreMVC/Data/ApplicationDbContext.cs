@@ -14,18 +14,12 @@ namespace HivelyCoreMVC.Data
         {
         }
 
-        public ApplicationDbContext()
-        {
-
-        }
-
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
           
         }
-
-
+        
         public DbSet<Queen> Queens { get; set; }
         public DbSet<Hive> Hives { get; set; }
         public DbSet<Location> Locations { get; set; }

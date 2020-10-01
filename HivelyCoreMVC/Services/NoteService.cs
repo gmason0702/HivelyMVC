@@ -13,18 +13,17 @@ namespace HivelyCoreMVC.Services
 {
     public class NoteService : INoteService
     {
-        private readonly Guid _userId;
+        private readonly ApplicationDbContext _context;
+        private int _userId;
 
-        public NoteService()
+        public NoteService() { }
+
+        public NoteService(ApplicationDbContext context)
         {
+            _context = context;
         }
 
-        public NoteService(Guid userId)
-        {
-            _userId = userId;
-        }
-
-        public bool CreateNote(NoteCreate model)
+        public async Task<bool> CreateNote(NoteCreate model)
         {
             var entity = new Note()
             {
@@ -35,81 +34,64 @@ namespace HivelyCoreMVC.Services
                 TypeOfNote = model.TypeOfNote
             };
 
-            using (var ctx = new ApplicationDbContext())
-            {
-                ctx.Notes.Add(entity);
-                return ctx.SaveChanges() == 1;
-            }
+            _context.Notes.Add(entity);
+            return await _context.SaveChangesAsync() == 1;
         }
 
-        public IEnumerable<NoteListItem> GetNotes()
+        public async Task<IEnumerable<NoteListItem>> GetNotes()
         {
-            using (var ctx = new ApplicationDbContext())
-            {
-                var query = ctx.Notes.Where(e => e.OwnerId == _userId)
-                    .Select(e => new NoteListItem
-                    {
-                        Id = e.Id,
-                        NoteTitle = e.NoteTitle,
-                        NoteDate = e.NoteDate,
-                        NoteContent = e.NoteContent,
-                        TypeOfNote = e.TypeOfNote
-                    });
-                return query.ToArray();
-            }
+            var query = _context.Notes.Where(e => e.OwnerId == _userId)
+                .Select(e => new NoteListItem
+                {
+                    Id = e.Id,
+                    NoteTitle = e.NoteTitle,
+                    NoteDate = e.NoteDate,
+                    NoteContent = e.NoteContent,
+                    TypeOfNote = e.TypeOfNote
+                });
+            return await query.ToListAsync();
         }
 
-        public NoteDetails GetNoteById(int id)
+        public async Task<NoteDetails> GetNoteById(int id)
         {
-            using (var ctx = new ApplicationDbContext())
-            {
-                var entity =
-                    ctx
-                        .Notes
-                        .Single(e => e.Id == id);
-                return
-                    new NoteDetails
-                    {
-                        Id = entity.Id,
-                        NoteTitle = entity.NoteTitle,
-                        NoteDate = entity.NoteDate,
-                        NoteContent = entity.NoteContent,
-                        TypeOfNote = entity.TypeOfNote,
-                        HiveId = entity.HiveId,
-                        QueenId = entity.QueenId,
-                        LocationId = entity.LocationId
-
-                    };
-            }
-
+            var entity =
+                await _context.Notes
+                    .FirstOrDefaultAsync(e => e.Id == id && e.OwnerId == _userId);
+            return
+                new NoteDetails
+                {
+                    Id = entity.Id,
+                    NoteTitle = entity.NoteTitle,
+                    NoteDate = entity.NoteDate,
+                    NoteContent = entity.NoteContent,
+                    TypeOfNote = entity.TypeOfNote,
+                    HiveId = entity.HiveId,
+                    QueenId = entity.QueenId,
+                    LocationId = entity.LocationId
+                };
         }
-        public bool UpdateNote(NoteEdit model)
+        public async Task<bool> UpdateNote(NoteEdit model)
         {
-            using (var ctx = new ApplicationDbContext())
-            {
-                var entity = ctx.Notes.Single(e => e.Id == model.Id);
-                entity.Id = model.Id;
-                entity.NoteTitle = model.NoteTitle;
-                entity.NoteDate = model.NoteDate;
-                entity.NoteContent = model.NoteContent;
-                entity.TypeOfNote = model.TypeOfNote;
-                entity.HiveId = model.HiveId;
-                entity.QueenId = model.QueenId;
-                entity.LocationId = model.LocationId;
+            var entity = await _context.Notes.FindAsync(model.Id);
+            entity.Id = model.Id;
+            entity.NoteTitle = model.NoteTitle;
+            entity.NoteDate = model.NoteDate;
+            entity.NoteContent = model.NoteContent;
+            entity.TypeOfNote = model.TypeOfNote;
+            entity.HiveId = model.HiveId;
+            entity.QueenId = model.QueenId;
+            entity.LocationId = model.LocationId;
 
-                return ctx.SaveChanges() == 1;
-
-            }
+            return await _context.SaveChangesAsync() == 1;
         }
 
-        public bool DeleteNote(int id)
+        public async Task<bool> DeleteNote(int id)
         {
-            using (var ctx = new ApplicationDbContext())
-            {
-                var entity = ctx.Notes.Single(e => e.Id == id);
-                ctx.Notes.Remove(entity);
-                return ctx.SaveChanges() == 1;
-            }
+            var entity = await _context.Notes.FindAsync(id);
+            _context.Notes.Remove(entity);
+            return await _context.SaveChangesAsync() == 1;
         }
+
+        public void SetUserId(int userId) => _userId = userId;
     }
 }

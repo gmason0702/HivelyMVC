@@ -14,7 +14,7 @@ namespace HivelyCoreMVC.Data.Entities
 
         [Key]
         public int Id { get; set; }
-        public Guid OwnerId { get; set; }
+        public int OwnerId { get; set; }
         public string HiveName { get; set; }
         public DateTime OriginDate { get; set; }
         public int NumberOfDeeps { get; set; }

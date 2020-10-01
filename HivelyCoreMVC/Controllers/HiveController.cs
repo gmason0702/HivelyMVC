@@ -15,10 +15,10 @@ namespace HivelyCoreMVC.Controllers
 {
     public class HiveController : Controller
     {
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
             var service = new HiveService();
-            var model = service.GetHives();
+            var model = await service.GetHives();
 
             return View(model);
         }
@@ -33,27 +33,26 @@ namespace HivelyCoreMVC.Controllers
         // POST: Hive/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(HiveCreate model)
+        public async Task<ActionResult> Create(HiveCreate model)
         {
             if (!ModelState.IsValid) return View(model);
 
             var service = new HiveService();
-            if (service.CreateHive(model))
+            if (await service.CreateHive(model))
             {
                 TempData["SaveResult"] = "Your hive was created. May the flow be aplenty.";
                 return RedirectToAction("Index");
-
             }
+
             ModelState.AddModelError("", "Hive could not be created.");
             return View(model);
-
         }
 
         // GET: Hive/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> Edit(int id)
         {
             var service = new HiveService();
-            var detail = service.GetHiveById(id);
+            var detail = await service.GetHiveById(id);
             var model = new HiveEdit
             {
                 HiveName = detail.HiveName,
@@ -69,7 +68,7 @@ namespace HivelyCoreMVC.Controllers
         // POST: Hive/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, HiveEdit model)
+        public async Task<ActionResult> Edit(int id, HiveEdit model)
         {
             if (!ModelState.IsValid) return View(model);
 
@@ -80,7 +79,7 @@ namespace HivelyCoreMVC.Controllers
             }
 
             var service = new HiveService();
-            if (service.UpdateHive(model))
+            if (await service.UpdateHive(model))
             {
                 TempData["SaveResult"] = "Your Hive was been edited.";
                 return RedirectToAction("Index");
@@ -90,23 +89,21 @@ namespace HivelyCoreMVC.Controllers
             return View(model);
         }
 
-
         // GET: Hive/Delete/5
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
             var service = new HiveService();
-            var model = service.GetHiveById(id);
+            var model = await service.GetHiveById(id);
             return View(model);
         }
-
 
         // POST: Hive/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteHive(int id)
+        public async Task<ActionResult> DeleteHive(int id)
         {
             var service = new HiveService();
-            service.DeleteHive(id);
+            await service.DeleteHive(id);
             TempData["SaveResult"] = "Your Hive has been deleted. Rest in Pollen.";
 
             return RedirectToAction("Index");

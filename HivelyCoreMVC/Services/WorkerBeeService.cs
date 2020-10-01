@@ -1,6 +1,7 @@
 ﻿using HivelyCoreMVC.Data;
 using HivelyCoreMVC.Data.Entities;
 using HivelyCoreMVC.Models.WorkerBeeModels;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -11,82 +12,69 @@ namespace HivelyCoreMVC.Services
 {
     public class WorkerBeeService
     {
-        private readonly Guid _userId;
+        private readonly ApplicationDbContext _context;
+        private int _userId;
 
         public WorkerBeeService() { }
 
-        public WorkerBeeService(Guid userId)
+        public WorkerBeeService(ApplicationDbContext context)
         {
-            _userId = userId;
+            _context = context;
         }
 
-        public bool CreateBees(WorkerBeeCreate model)
+        public async Task<bool> CreateBees(WorkerBeeCreate model)
         {
-
             var entity = new WorkerBee()
             {
                 OwnerId = _userId,
                 OriginLocation = model.OriginLocation,
                 OriginDate = model.OriginDate,
             };
-
-            using (var ctx = new ApplicationDbContext())
-            {
-                ctx.WorkerBees.Add(entity);
-                return ctx.SaveChanges() == 1;
-            }
-
+            _context.WorkerBees.Add(entity);
+            var changes = await _context.SaveChangesAsync();
+            return changes == 1;
         }
 
-        public IEnumerable<WorkerBeeListItem> GetBees()
+        public async Task<IEnumerable<WorkerBeeListItem>> GetBees()
         {
-            using (var ctx = new ApplicationDbContext())
-            {
-                var query = ctx.WorkerBees.Where(e => e.OwnerId == _userId)
-                    .Select(e => new WorkerBeeListItem
-                    {
-                        OriginLocation = e.OriginLocation,
-                        OriginDate = e.OriginDate,
-                        Hive = e.Hive
-                    });
-                return query.ToArray();
-            }
-        }
-
-        public WorkerBeeDetails GetBeesById(int id)
-        {
-            using (var ctx = new ApplicationDbContext())
-            {
-                var entity = ctx.WorkerBees.Single(e => e.Id == id);
-                return new WorkerBeeDetails()
+            var query = _context.WorkerBees.Where(e => e.OwnerId == _userId)
+                .Select(e => new WorkerBeeListItem
                 {
-                    Id = entity.Id,
-                    OriginLocation = entity.OriginLocation,
-                    OriginDate = entity.OriginDate
-
-                };
-            }
-        }
-        public bool UpdateBees(WorkerBeeEdit model)
-        {
-            using (var ctx = new ApplicationDbContext())
-            {
-                var entity = ctx.WorkerBees.Single(e => e.Id == model.Id);
-                entity.Id = model.Id;
-                entity.OriginDate = model.OriginDate;
-                entity.OriginLocation = model.OriginLocation;
-                return ctx.SaveChanges() == 1;
-            }
+                    OriginLocation = e.OriginLocation,
+                    OriginDate = e.OriginDate,
+                    Hive = e.Hive
+                });
+            return await query.ToListAsync();
         }
 
-        public bool DeleteBees(int id)
+        public async Task<WorkerBeeDetails> GetBeesById(int id)
         {
-            using (var ctx = new ApplicationDbContext())
+            var entity = await _context.WorkerBees.FirstOrDefaultAsync(e => e.Id == id && e.OwnerId == _userId);
+            return new WorkerBeeDetails()
             {
-                var entity = ctx.WorkerBees.Single(e => e.Id == id);
-                ctx.WorkerBees.Remove(entity);
-                return ctx.SaveChanges() == 1;
-            }
+                Id = entity.Id,
+                OriginLocation = entity.OriginLocation,
+                OriginDate = entity.OriginDate
+            };
         }
+
+        public async Task<bool> UpdateBees(WorkerBeeEdit model)
+        {
+
+            var entity = await _context.WorkerBees.FindAsync(model.Id);
+            entity.Id = model.Id;
+            entity.OriginDate = model.OriginDate;
+            entity.OriginLocation = model.OriginLocation;
+            return await _context.SaveChangesAsync() == 1;
+        }
+
+        public async Task<bool> DeleteBees(int id)
+        {
+            var entity = await _context.WorkerBees.FindAsync(id);
+            _context.WorkerBees.Remove(entity);
+            return await _context.SaveChangesAsync() == 1;
+        }
+
+        public void SetUserId(int userId) => _userId = userId;
     }
 }
