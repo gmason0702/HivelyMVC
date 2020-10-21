@@ -14,13 +14,12 @@ namespace HivelyCoreMVC.Data.Entities
 
         [Key]
         public int Id { get; set; }
-        public int OwnerId { get; set; }
+        public Guid OwnerId { get; set; }
         public string HiveName { get; set; }
         public DateTime OriginDate { get; set; }
         public int NumberOfDeeps { get; set; }
         public bool HasSwarmed { get; set; }
         public Status Status { get; set; }
-
 
         //[ForeignKey(nameof(WorkerBees))]
         //public int WorkersId { get; set; }

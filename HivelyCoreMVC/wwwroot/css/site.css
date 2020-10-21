@@ -2,70 +2,254 @@
 for details on configuring this project to bundle and minify static web assets. */
 
 a.navbar-brand {
-  white-space: normal;
-  text-align: center;
-  word-break: break-all;
+    white-space: normal;
+    text-align: center;
+    word-break: break-all;
 }
 
+.navbar-light .navbar-brand {
+    color: #c3a500;
+}
+
+.navbar {
+    color: #9f8706;
+}
 /* Provide sufficient contrast against white background */
 a {
-  color: #0366d6;
+    color: #0c0a00;
 }
 
+    a.nav-link light-text {
+        color: #c3a500 !important;
+    }
+
+.navbar-light .navbar-nav .nav-link {
+    color: #c3a500 !important;
+}
+
+
 .btn-primary {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
+    color: #fff;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
 }
 
 .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
+    color: #fff;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
 }
 
+.icon {
+    width: 30px;
+    height: 30px;
+    margin-right: 20px;
+}
 /* Sticky footer styles
 -------------------------------------------------- */
 html {
-  font-size: 14px;
+    font-size: 14px;
 }
+
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
 .border-top {
-  border-top: 1px solid #e5e5e5;
+    border-top: 1px solid #e5e5e5;
 }
+
 .border-bottom {
-  border-bottom: 1px solid #e5e5e5;
+    border-bottom: 1px solid #e5e5e5;
 }
 
 .box-shadow {
-  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+    box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
 }
 
 button.accept-policy {
-  font-size: 1rem;
-  line-height: inherit;
+    font-size: 1rem;
+    line-height: inherit;
 }
 
 /* Sticky footer styles
 -------------------------------------------------- */
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
 body {
-  /* Margin bottom by footer height */
-  margin-bottom: 60px;
+    /* Margin bottom by footer height */
+    margin-bottom: 60px;
 }
+
 .footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  white-space: nowrap;
-  line-height: 60px; /* Vertically center the text there */
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    white-space: nowrap;
+    line-height: 60px; /* Vertically center the text there */
+}
+
+body {
+    /*padding-top: 50px;*/
+    padding-bottom: 20px;
+    background-color: gold
+}
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Override the default bootstrap behavior where horizontal description lists 
+   will truncate terms that are too long to fit in the left column 
+*/
+.dl-horizontal dt {
+    white-space: normal;
+}
+
+/* Set width on the form input elements since they're 100% wide by default */
+input,
+select,
+textarea {
+    max-width: 280px;
+}
+
+.homeIndex {
+    border-radius: 15px;
+    color: black;
+    background-color: White;
+    width: 200px;
+    padding: 5px;
+    margin-top: 35px;
+    text-align: center;
+    border: solid black 0.02rem;
+    box-shadow: 1px 1px 3px;
+    outline: none;
+}
+
+    .homeIndex:hover {
+        transition-duration: 0.4s;
+        background-color: antiquewhite;
+        transform: scaleX(1.02) scaleY(1.02);
+        box-shadow: -1px -1px 3px rgba(255,255,255,0.4), 0 10px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .homeIndex:active {
+        transform: translateY(-1px);
+        box-shadow: 0 5px 5px rgba(0, 0, 0, 0.2);
+    }
+
+
+h1 {
+    text-align: center;
+    font-weight: 900;
+    font-size: 48px;
+}
+
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    padding-top: 100px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.9); /* Black w/ opacity */
+}
+
+.modal-content {
+    margin: auto;
+    display: block;
+    width: 80%;
+    max-width: 700px;
+}
+
+.modal-content {
+    -webkit-animation-name: zoom;
+    -webkit-animation-duration: 0.6s;
+    animation-name: zoom;
+    animation-duration: 0.6s;
+}
+
+@-webkit-keyframes zoom {
+    from {
+        -webkit-transform: scale(0)
+    }
+
+    to {
+        -webkit-transform: scale(1)
+    }
+}
+
+@-webkit-keyframes zoom {
+    from {
+        -webkit-transform: scale(0)
+    }
+
+    to {
+        -webkit-transform: scale(1)
+    }
+}
+
+.close {
+    position: absolute;
+    top: 15px;
+    right: 35px;
+    color: #f1f1f1;
+    font-size: 40px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+    .close:hover,
+    .close:focus {
+        color: #bbb;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+#noteImages {
+    height: 200px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-left:-18px;
+}
+
+    #noteImages:hover {
+        opacity: 0.7
+    }
+
+/*.noteImages:hover {
+        transform: scale(1.5);
+    }*/
+
+.row-1, .row-2, .row-3, .row-4 {
+    text-align: center;
+    margin: auto;
+}
+
+footer {
+    text-align: center;
+}
+
+.welcome {
+    font-size: 18px;
+    text-align: center;
+}
+
+
+@media only screen and (max-width: 700px) {
+    .modal-content {
+        width: 100%;
+    }
 }

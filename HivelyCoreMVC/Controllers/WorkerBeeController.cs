@@ -9,15 +9,20 @@ using HivelyCoreMVC.Data;
 using HivelyCoreMVC.Data.Entities;
 using HivelyCoreMVC.Services;
 using HivelyCoreMVC.Models.WorkerBeeModels;
+using System.Security.Claims;
 
 namespace HivelyCoreMVC.Controllers
 {
     public class WorkerBeeController : Controller
     {
+        private readonly IWorkerBeeService _service;
+        public WorkerBeeController(IWorkerBeeService service)
+        {
+            _service = service;
+        }
         public async Task<ActionResult> Index()
         {
-            var service = new WorkerBeeService(); 
-            var model = await service.GetBees();
+            var model = await _service.GetBees();
 
             return View(model);
         }
@@ -36,8 +41,7 @@ namespace HivelyCoreMVC.Controllers
         {
             if (!ModelState.IsValid) return View(model);
 
-            var service = new WorkerBeeService();
-            if (await service.CreateBees(model))
+            if (await _service.CreateBees(model))
             {
                 TempData["SaveResult"] = "Your worker bees were added. May they polinate.";
                 return RedirectToAction("Index");
@@ -50,8 +54,7 @@ namespace HivelyCoreMVC.Controllers
         // GET: Hive/Edit/5
         public async Task<ActionResult> Edit(int id)
         {
-            var service = new WorkerBeeService();
-            var detail = await service.GetBeesById(id);
+            var detail = await _service.GetBeesById(id);
             var model = new WorkerBeeEdit
             {
                 OriginDate = detail.OriginDate,
@@ -73,8 +76,7 @@ namespace HivelyCoreMVC.Controllers
                 return View(model);
             }
 
-            var service = new WorkerBeeService();
-            if (await service.UpdateBees(model))
+            if (await _service.UpdateBees(model))
             {
                 TempData["SaveResult"] = "Your bees were been edited.";
                 return RedirectToAction("Index");
@@ -87,8 +89,7 @@ namespace HivelyCoreMVC.Controllers
         // GET: Hive/Delete/5
         public async Task<ActionResult> Delete(int id)
         {
-            var service = new WorkerBeeService();
-            var model = await service.GetBeesById(id);
+            var model = await _service.GetBeesById(id);
             return View(model);
         }
 
@@ -97,13 +98,21 @@ namespace HivelyCoreMVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteHive(int id)
         {
-            var service = new WorkerBeeService();
-            await service.DeleteBees(id);
+            await _service.DeleteBees(id);
             TempData["SaveResult"] = "Your Hive has been deleted. Rest in Pollen.";
 
             return RedirectToAction("Index");
         }
 
+        public Guid GetUserId()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId != null)
+            {
+                return Guid.Parse(userId);
+            }
+            return Guid.Empty;
+        }
         //private WorkerBeeService CreateWorkerBeeService()
         //{
         //    var userId = Guid.Parse(User.Identity.GetUserId()); 

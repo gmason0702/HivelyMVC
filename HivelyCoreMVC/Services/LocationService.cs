@@ -11,10 +11,10 @@ using System.Threading.Tasks;
 
 namespace HivelyCoreMVC.Services
 {
-    public class LocationService
+    public class LocationService : ILocationService
     {
         private readonly ApplicationDbContext _context;
-        private int _userId;
+        private Guid _userId;
 
         public LocationService(ApplicationDbContext context)
         {
@@ -51,12 +51,13 @@ namespace HivelyCoreMVC.Services
                         Latitude = e.Latitude,
                         MapLink = e.MapLink
                     });
-            return await locationQuery.ToListAsync();
+            return await locationQuery.ToArrayAsync();
         }
 
         public async Task<LocationDetails> GetLocationById(int id)
         {
-            var entity = await _context.Locations.FirstOrDefaultAsync(e => e.Id == id && e.OwnerId == _userId);
+            var entity = await _context.Locations
+                           .FirstOrDefaultAsync(e => e.Id == id && e.OwnerId == _userId);
             if (entity is null)
             {
                 return null;
@@ -119,6 +120,6 @@ namespace HivelyCoreMVC.Services
             return await _context.SaveChangesAsync() == 1;
         }
 
-        public void SetUserId(int userId) => _userId = userId;
+        public void SetUserId(Guid userId) => _userId = userId;
     }
 }

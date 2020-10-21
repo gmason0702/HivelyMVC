@@ -10,19 +10,28 @@ using HivelyCoreMVC.Data.Entities;
 using HivelyCoreMVC.Services;
 using System.Security.Claims;
 using HivelyCoreMVC.Models.HiveModels;
+using System.Net.Mime;
 
 namespace HivelyCoreMVC.Controllers
 {
     public class HiveController : Controller
     {
+        private readonly IHiveService _service;
+        private readonly ApplicationDbContext _context;
+        public HiveController(IHiveService service, ApplicationDbContext context)
+        {
+            _service = service;
+            _context = context;
+        }
         public async Task<ActionResult> Index()
         {
-            var service = new HiveService();
-            var model = await service.GetHives();
+            //var service = new HiveService();
+            var userId = GetUserId();
+            _service.SetUserId(userId);
+            var model = await _service.GetHives();
 
             return View(model);
         }
-
 
         // GET: Hive/Create
         public ActionResult Create()
@@ -36,14 +45,12 @@ namespace HivelyCoreMVC.Controllers
         public async Task<ActionResult> Create(HiveCreate model)
         {
             if (!ModelState.IsValid) return View(model);
-
-            var service = new HiveService();
-            if (await service.CreateHive(model))
+           
+            if (await _service.CreateHive(model))
             {
                 TempData["SaveResult"] = "Your hive was created. May the flow be aplenty.";
                 return RedirectToAction("Index");
             }
-
             ModelState.AddModelError("", "Hive could not be created.");
             return View(model);
         }
@@ -51,8 +58,7 @@ namespace HivelyCoreMVC.Controllers
         // GET: Hive/Edit/5
         public async Task<ActionResult> Edit(int id)
         {
-            var service = new HiveService();
-            var detail = await service.GetHiveById(id);
+            var detail = await _service.GetHiveById(id);
             var model = new HiveEdit
             {
                 HiveName = detail.HiveName,
@@ -78,8 +84,7 @@ namespace HivelyCoreMVC.Controllers
                 return View(model);
             }
 
-            var service = new HiveService();
-            if (await service.UpdateHive(model))
+            if (await _service.UpdateHive(model))
             {
                 TempData["SaveResult"] = "Your Hive was been edited.";
                 return RedirectToAction("Index");
@@ -92,8 +97,7 @@ namespace HivelyCoreMVC.Controllers
         // GET: Hive/Delete/5
         public async Task<ActionResult> Delete(int id)
         {
-            var service = new HiveService();
-            var model = await service.GetHiveById(id);
+            var model = await _service.GetHiveById(id);
             return View(model);
         }
 
@@ -102,11 +106,20 @@ namespace HivelyCoreMVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteHive(int id)
         {
-            var service = new HiveService();
-            await service.DeleteHive(id);
+            await _service.DeleteHive(id);
             TempData["SaveResult"] = "Your Hive has been deleted. Rest in Pollen.";
 
             return RedirectToAction("Index");
+        }
+
+        public Guid GetUserId()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId != null)
+            {
+                return Guid.Parse(userId);
+            }
+            return Guid.Empty;
         }
 
         //private HiveService CreateHiveService()

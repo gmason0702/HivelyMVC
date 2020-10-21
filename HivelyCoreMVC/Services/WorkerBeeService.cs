@@ -10,10 +10,10 @@ using System.Threading.Tasks;
 
 namespace HivelyCoreMVC.Services
 {
-    public class WorkerBeeService
+    public class WorkerBeeService : IWorkerBeeService
     {
         private readonly ApplicationDbContext _context;
-        private int _userId;
+        private Guid _userId;
 
         public WorkerBeeService() { }
 
@@ -37,7 +37,7 @@ namespace HivelyCoreMVC.Services
 
         public async Task<IEnumerable<WorkerBeeListItem>> GetBees()
         {
-            var query = _context.WorkerBees.Where(e => e.OwnerId == _userId)
+            var query = _context.WorkerBees/*.Where(e => e.OwnerId == _userId)*/
                 .Select(e => new WorkerBeeListItem
                 {
                     OriginLocation = e.OriginLocation,
@@ -75,6 +75,6 @@ namespace HivelyCoreMVC.Services
             return await _context.SaveChangesAsync() == 1;
         }
 
-        public void SetUserId(int userId) => _userId = userId;
+        public void SetUserId(Guid userId) => _userId = userId;
     }
 }

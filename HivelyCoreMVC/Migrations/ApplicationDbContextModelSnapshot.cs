@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace HivelyCoreMVC.Data.Migrations
+namespace HivelyCoreMVC.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     partial class ApplicationDbContextModelSnapshot : ModelSnapshot
@@ -59,6 +59,27 @@ namespace HivelyCoreMVC.Data.Migrations
                     b.ToTable("Hives");
                 });
 
+            modelBuilder.Entity("HivelyCoreMVC.Data.Entities.ImageUpload", b =>
+                {
+                    b.Property<int>("ImageId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("ImageName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("OwnerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ImageId");
+
+                    b.ToTable("Images");
+                });
+
             modelBuilder.Entity("HivelyCoreMVC.Data.Entities.Location", b =>
                 {
                     b.Property<int>("Id")
@@ -73,6 +94,7 @@ namespace HivelyCoreMVC.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LocationName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Longitude")
@@ -99,7 +121,16 @@ namespace HivelyCoreMVC.Data.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("FilePath")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("HiveId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("HiveRating")
+                        .HasColumnType("int");
+
+                    b.Property<int>("JobType")
                         .HasColumnType("int");
 
                     b.Property<int?>("LocationId")
@@ -188,6 +219,46 @@ namespace HivelyCoreMVC.Data.Migrations
                     b.HasIndex("HiveId");
 
                     b.ToTable("WorkerBees");
+                });
+
+            modelBuilder.Entity("HivelyCoreMVC.Models.HiveModels.HiveListItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("HasSwarmed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("HiveName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("LocationId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NumberOfDeeps")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("OriginDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("OwnerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("QueenId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LocationId");
+
+                    b.HasIndex("QueenId");
+
+                    b.ToTable("HiveListItem");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -427,6 +498,17 @@ namespace HivelyCoreMVC.Data.Migrations
                         .HasForeignKey("HiveId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("HivelyCoreMVC.Models.HiveModels.HiveListItem", b =>
+                {
+                    b.HasOne("HivelyCoreMVC.Data.Entities.Location", "Location")
+                        .WithMany()
+                        .HasForeignKey("LocationId");
+
+                    b.HasOne("HivelyCoreMVC.Data.Entities.Queen", "Queen")
+                        .WithMany()
+                        .HasForeignKey("QueenId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

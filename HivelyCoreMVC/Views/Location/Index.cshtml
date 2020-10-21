@@ -1,10 +1,10 @@
-﻿@model IEnumerable<HivelyCoreMVC.Data.Entities.Location>
+﻿@model IEnumerable<HivelyCoreMVC.Models.LocationModels.LocationListItem>
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>Locations</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -12,9 +12,6 @@
 <table class="table">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.OwnerId)
-            </th>
             <th>
                 @Html.DisplayNameFor(model => model.LocationName)
             </th>
@@ -39,9 +36,6 @@
     <tbody>
 @foreach (var item in Model) {
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.OwnerId)
-            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.LocationName)
             </td>

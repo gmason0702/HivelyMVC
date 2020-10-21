@@ -1,10 +1,10 @@
-﻿@model IEnumerable<HivelyCoreMVC.Data.Entities.Note>
+﻿@model IEnumerable<HivelyCoreMVC.Models.NoteModels.NoteListItem>
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>Notes</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -28,13 +28,13 @@
                 @Html.DisplayNameFor(model => model.TypeOfNote)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Hive)
+                @Html.DisplayNameFor(model => model.Hives)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Queen)
+                @Html.DisplayNameFor(model => model.Queens)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Location)
+                @Html.DisplayNameFor(model => model.Locations)
             </th>
             <th></th>
         </tr>
@@ -42,9 +42,6 @@
     <tbody>
 @foreach (var item in Model) {
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.OwnerId)
-            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.NoteTitle)
             </td>
@@ -58,13 +55,13 @@
                 @Html.DisplayFor(modelItem => item.TypeOfNote)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Hive.Id)
+                @Html.DisplayFor(modelItem => item.Hives)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Queen.Id)
+                @Html.DisplayFor(modelItem => item.Queens)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Location.Id)
+                @Html.DisplayFor(modelItem => item.Locations)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

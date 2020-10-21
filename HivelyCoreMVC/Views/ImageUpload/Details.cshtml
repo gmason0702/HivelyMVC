@@ -1,0 +1,67 @@
+﻿@model HivelyCoreMVC.Models.ImageUploadModels.ImageUploadDetails
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Image Details</h1>
+
+<div class="col-sm-6">
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ImageId)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ImageId)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ImageName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ImageName)
+        </dd>
+
+    </dl>
+    <div class=" col-sm-6">
+        <img id="noteImages" src="~/Image/@Url.Content(Model.ImageName)" alt="Image" />
+    </div>
+</div>
+<div id="myModal" class="modal">
+    <span class="close">&times;</span>
+    <img class="modal-content" id="img01">
+</div>
+
+<script>
+    var modal = document.getElementById("myModal");
+    var img = document.getElementById("noteImages");
+    var modalImg = document.getElementById("img01");
+    img.onclick = function () {
+        modal.style.display = "block";
+        modalImg.src = this.src;
+    }
+    var span = document.getElementsByClassName("close")[0];
+    span.onclick = function () {
+        modal.style.display = "none";
+    }
+</script>
+@*<div class="col-sm-6">
+        <a href="javascript:;" onclick="openImage('~/Image/@Url.Content(Model.ImageName)')"><img class="noteImages" src="~/Image/@Url.Content(Model.ImageName)" alt="Image" /></a>
+    </div>
+
+    <div>
+        @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
+        <a asp-action="Index">Back to List</a>
+    </div>
+
+    <script type="text/javascript">
+      function openImage(imageUrl) {
+        window.open('~/Image/@Url.Content(Model.ImageName)');
+      }
+    </script>*@

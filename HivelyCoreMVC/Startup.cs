@@ -36,6 +36,12 @@ namespace HivelyCoreMVC
             services.AddControllersWithViews();
             services.AddRazorPages();
             services.AddScoped<INoteService, NoteService>();
+            services.AddScoped<IQueenService, QueenService>();
+            services.AddScoped<ILocationService, LocationService>();
+            services.AddScoped<IWorkerBeeService, WorkerBeeService>();
+            services.AddScoped<IHiveService, HiveService>();
+            services.AddScoped<IImageUploadService, ImageUploadService>();
+
             services.AddDbContextPool<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
         }
 

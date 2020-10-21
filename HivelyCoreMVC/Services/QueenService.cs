@@ -11,10 +11,10 @@ using System.Threading.Tasks;
 
 namespace HivelyCoreMVC.Services
 {
-    public class QueenService
+    public class QueenService : IQueenService
     {
         private readonly ApplicationDbContext _context;
-        private int _userId;
+        private Guid _userId;
 
         public QueenService(ApplicationDbContext context)
         {
@@ -33,8 +33,8 @@ namespace HivelyCoreMVC.Services
                 OriginDate = model.OriginDate,
                 OriginLocation = model.OriginLocation,
             };
-
             _context.Queens.Add(entity);
+
             var changes = await _context.SaveChangesAsync();
             return changes == 1;
         }
@@ -109,7 +109,7 @@ namespace HivelyCoreMVC.Services
         {
 
             var entity = await _context.Queens.FindAsync(id);
-            if (entity?.OwnerId !=_userId)
+            if (entity?.OwnerId != _userId)
             {
                 return false;
             }
@@ -117,6 +117,6 @@ namespace HivelyCoreMVC.Services
             return await _context.SaveChangesAsync() == 1;
         }
 
-        public void SetUserId(int userId) => _userId = userId;
+        public void SetUserId(Guid userId) => _userId = userId;
     }
 }

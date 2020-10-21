@@ -2,7 +2,37 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<h3 class="welcome">WELCOME TO</h3>
+<h1>HIVELY</h1>
+<div class="row-1">
+    <div class="col-md-12">
+        @using (Html.BeginForm("Index", "Queen"))
+        {
+            <button class="homeIndex" type="submit">Queens</button>
+        }
+    </div>
+</div>
+<div class="row-2">
+    <div class="col-md-12">
+        @using (Html.BeginForm("Index", "Hive"))
+        {
+            <button class="homeIndex" type="submit">Hives</button>
+        }
+    </div>
+</div>
+<div class=" row-3">
+    <div class="col-md-12">
+        @using (Html.BeginForm("Index", "Location"))
+        {
+            <button class="homeIndex" type="submit">Locations</button>
+        }
+    </div>
+</div>
+<div class="row-4">
+    <div class="col-md-12">
+        @using (Html.BeginForm("Index", "Note"))
+        {
+            <button class="homeIndex" type="submit">Notes</button>
+        }
+    </div>
 </div>

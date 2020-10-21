@@ -4,6 +4,8 @@ using System.Text;
 using HivelyCoreMVC.Data.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using HivelyCoreMVC.Models.HiveModels;
+using HivelyCoreMVC.Models.ImageUploadModels;
 
 namespace HivelyCoreMVC.Data
 {
@@ -17,7 +19,6 @@ namespace HivelyCoreMVC.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-          
         }
         
         public DbSet<Queen> Queens { get; set; }
@@ -25,5 +26,8 @@ namespace HivelyCoreMVC.Data
         public DbSet<Location> Locations { get; set; }
         public DbSet<Note> Notes { get; set; }
         public DbSet<WorkerBee> WorkerBees { get; set; }
+        public DbSet<HivelyCoreMVC.Models.HiveModels.HiveListItem> HiveListItem { get; set; }
+        public DbSet<ImageUpload> Images { get; set; }
+        
     }
 }

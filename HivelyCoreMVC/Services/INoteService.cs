@@ -1,4 +1,5 @@
 ﻿using HivelyCoreMVC.Models.NoteModels;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -11,5 +12,6 @@ namespace HivelyCoreMVC.Services
         Task<NoteDetails> GetNoteById(int id);
         Task<IEnumerable<NoteListItem>> GetNotes();
         Task<bool> UpdateNote(NoteEdit model);
+        void SetUserId(Guid userId);
     }
 }

@@ -14,9 +14,10 @@ namespace HivelyCoreMVC.Services
     public class NoteService : INoteService
     {
         private readonly ApplicationDbContext _context;
-        private int _userId;
+        private Guid _userId;
 
         public NoteService() { }
+
 
         public NoteService(ApplicationDbContext context)
         {
@@ -31,7 +32,7 @@ namespace HivelyCoreMVC.Services
                 NoteTitle = model.NoteTitle,
                 NoteDate = model.NoteDate,
                 NoteContent = model.NoteContent,
-                TypeOfNote = model.TypeOfNote
+                TypeOfNote = model.TypeOfNote,
             };
 
             _context.Notes.Add(entity);
@@ -47,7 +48,7 @@ namespace HivelyCoreMVC.Services
                     NoteTitle = e.NoteTitle,
                     NoteDate = e.NoteDate,
                     NoteContent = e.NoteContent,
-                    TypeOfNote = e.TypeOfNote
+                    TypeOfNote = e.TypeOfNote,
                 });
             return await query.ToListAsync();
         }
@@ -67,7 +68,9 @@ namespace HivelyCoreMVC.Services
                     TypeOfNote = entity.TypeOfNote,
                     HiveId = entity.HiveId,
                     QueenId = entity.QueenId,
-                    LocationId = entity.LocationId
+                    LocationId = entity.LocationId,
+                    //File = (List<Microsoft.AspNetCore.Http.IFormFile>)entity.File
+
                 };
         }
         public async Task<bool> UpdateNote(NoteEdit model)
@@ -92,6 +95,6 @@ namespace HivelyCoreMVC.Services
             return await _context.SaveChangesAsync() == 1;
         }
 
-        public void SetUserId(int userId) => _userId = userId;
+        public void SetUserId(Guid userId) => _userId = userId;
     }
 }

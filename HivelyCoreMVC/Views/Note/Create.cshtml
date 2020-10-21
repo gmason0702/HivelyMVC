@@ -4,7 +4,7 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
+<h1>Create New Note</h1>
 
 <h4>Note</h4>
 <hr />
@@ -12,11 +12,11 @@
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="OwnerId" class="control-label"></label>
-                <input asp-for="OwnerId" class="form-control" />
-                <span asp-validation-for="OwnerId" class="text-danger"></span>
-            </div>
+            @*<div class="form-group">
+            <label asp-for="OwnerId" class="control-label"></label>
+            <input asp-for="OwnerId" class="form-control" />
+            <span asp-validation-for="OwnerId" class="text-danger"></span>
+        </div>*@
             <div class="form-group">
                 <label asp-for="NoteTitle" class="control-label"></label>
                 <input asp-for="NoteTitle" class="form-control" />
@@ -34,23 +34,55 @@
             </div>
             <div class="form-group">
                 <label asp-for="TypeOfNote" class="control-label"></label>
-                <select asp-for="TypeOfNote" class="form-control"></select>
+                <select asp-for="TypeOfNote" class="form-control" asp-items="Html.GetEnumSelectList<HivelyCoreMVC.Data.Entities.NoteType>()"><option>Note Type...</option></select>
+
                 <span asp-validation-for="TypeOfNote" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="HiveId" class="control-label"></label>
-                <select asp-for="HiveId" class ="form-control" asp-items="ViewBag.HiveId"></select>
+                <label asp-for="JobType" class="control-label"></label>
+                <select asp-for="JobType" class="form-control" asp-items="Html.GetEnumSelectList<HivelyCoreMVC.Data.Entities.Job>()"><option>Type of Job...</option></select>
+
+                <span asp-validation-for="JobType" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="HiveRating" class="control-label"></label>
+                <select asp-for="HiveRating" class="form-control" asp-items="Html.GetEnumSelectList<HivelyCoreMVC.Data.Entities.Rating>()"><option>Hive Health...</option></select>
+
+                <span asp-validation-for="HiveRating" class="text-danger"></span>
+            </div>
+            @*<div class="form-group">
+                <label asp-for="HiveId" class="control-label"></label>
+                <select asp-for="HiveId" class="form-control" asp-items="@(new SelectList(@ViewBag.ListOfHives, "Id", "Name" ))"></select>
+            </div>*@
+            <div class="form-group">
                 <label asp-for="QueenId" class="control-label"></label>
-                <select asp-for="QueenId" class ="form-control" asp-items="ViewBag.QueenId"></select>
+                <select asp-for="QueenId" class="form-control" asp-items="ViewBag.QueenId"></select>
             </div>
             <div class="form-group">
                 <label asp-for="LocationId" class="control-label"></label>
-                <select asp-for="LocationId" class ="form-control" asp-items="ViewBag.LocationId"></select>
+                <select asp-for="LocationId" class="form-control" asp-items="ViewBag.LocationId"></select>
             </div>
+            @*<div class="fileForm" enctype="multipart/form-data" method="post" action="/note/upload">
+            <label asp-for="FilePath" class=" = control-label">Select Image</label>
+            <input asp-for="FilePath" class="form-control" />
+            <input type="file" name="file" />
+            <input type="submit" />
+        </div>*@
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+        <form method="post" enctype="multipart/form-data" asp-controller="Note" asp-action="Index">
+            <div class="form-group">
+                <div class="col-md-10">
+                    <p>Upload one or more files</p>
+                    <input type="file" name="files"multiple />
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-10">
+                    <input type="submit" value="Upload" />
+                </div>
             </div>
         </form>
     </div>

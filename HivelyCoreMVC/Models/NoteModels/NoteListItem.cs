@@ -1,4 +1,8 @@
 ﻿using HivelyCoreMVC.Data.Entities;
+using HivelyCoreMVC.Models.HiveModels;
+using HivelyCoreMVC.Models.LocationModels;
+using HivelyCoreMVC.Models.QueenModels;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,5 +18,11 @@ namespace HivelyCoreMVC.Models.NoteModels
         public DateTime NoteDate { get; set; }
         public string NoteContent { get; set; }
         public NoteType TypeOfNote { get; set; }
+        public ICollection<Hive> Hives { get; set; }
+        public ICollection<Queen> Queens { get; set; }
+        public ICollection<Location> Locations { get; set; }
+        public List<IFormFile> File { get; set; } = new List<IFormFile>();
+
+
     }
 }

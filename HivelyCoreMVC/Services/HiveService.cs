@@ -12,10 +12,10 @@ using System.Threading.Tasks;
 
 namespace HivelyCoreMVC.Services
 {
-    public class HiveService
+    public class HiveService : IHiveService
     {
         private readonly ApplicationDbContext _context;
-        private int _userId;
+        private Guid _userId;
 
         public HiveService() { }
         public HiveService(ApplicationDbContext context)
@@ -83,7 +83,6 @@ namespace HivelyCoreMVC.Services
         }
         public async Task<bool> UpdateHive(HiveEdit model)
         {
-
             var entity = await _context.Hives.FindAsync(model.Id);
             entity.Id = model.Id;
             entity.HiveName = model.HiveName;
@@ -103,6 +102,6 @@ namespace HivelyCoreMVC.Services
             return _context.SaveChanges() == 1;
         }
 
-        public void SetUserId(int userId) => _userId = userId;
+        public void SetUserId(Guid userId) => _userId = userId;
     }
 }
